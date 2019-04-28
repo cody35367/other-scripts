@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
-import gi
-from gi.repository import GLib
-from gi.repository import Gio
+# This was originally authored by Kim Nguyễn
+# https://bugs.launchpad.net/gnome-settings-daemon/+bug/1722286/comments/3
 
-import dbus
+import dbus, subprocess
 from dbus.mainloop.glib import DBusGMainLoop
+from gi.repository import GLib
 
-import subprocess
+LID_CLOSE_BATTERY_ACTION="suspend"
+LID_CLOSE_AC_ACTION="nothing"
 
 class Action():
     def blank(self):
@@ -30,8 +31,6 @@ class Action():
 
     def logout(self):
         return subprocess.call(['gnome-session-quit', '--no-prompt'])
-
-
 
 class CustomSuspendMonitor():
     DBUS_UPOWER_PATH = '/org/freedesktop/UPower'
@@ -65,15 +64,12 @@ class CustomSuspendMonitor():
     def apply_policy (self):
         if self.lid_closed:
             action = ""
-            gsettings = Gio.Settings.new ('org.gnome.settings-daemon.plugins.power')
             if self.on_battery:
-                action = gsettings.get_string ('lid-close-battery-action')
+                action = LID_CLOSE_BATTERY_ACTION
             else:
-                action = gsettings.get_string ('lid-close-ac-action')
+                action = LID_CLOSE_AC_ACTION
 
             self.perform_action(action)
-
-
 
     def handle_prop_changed(self,arg1, arg2, arg3):
         for key in arg2:
@@ -82,7 +78,6 @@ class CustomSuspendMonitor():
             elif  key == self.UPOWER_ON_BATTERY:
                 self.on_battery = arg2[key]
         self.apply_policy()
-
 
     def start (self):
         self.init_status()
@@ -97,10 +92,6 @@ class CustomSuspendMonitor():
             loop.run()
         except (KeyboardInterrupt, SystemExit):
             return
-
-
-
-
 
 if __name__ == '__main__':
     CustomSuspendMonitor().start()

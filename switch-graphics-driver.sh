@@ -2,7 +2,7 @@
 
 set -e
 
-NVIDIA_DRIVER_PACKAGE="nvidia-driver-415"
+NVIDIA_DRIVER_PACKAGE="nvidia-driver-430"
 NVIDIA_CHECK_FOR_BINARY="nvidia-smi"
 NVIDIA_FOUND_STR="The proprietary NVIDIA driver is install!"
 NVIDIA_NOT_FOUND_STR="The proprietary NVIDIA driver was NOT found!"
@@ -20,7 +20,7 @@ function remove_nvidia(){
     sudo apt-get autoremove -y
 }
 
-if [ $(which ${NVIDIA_CHECK_FOR_BINARY}) ]; then
+if [[ $(which ${NVIDIA_CHECK_FOR_BINARY}) ]]; then
     echo ${NVIDIA_FOUND_STR}
     read -p "${REMOVE_NVIDIA_PROMPT}" -n 1 -r yn
     echo
