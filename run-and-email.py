@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import argparse
+import argparse,subprocess,shlex
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -13,10 +13,20 @@ def parse_args():
 def parse_config():
     pass
 
+def run(commands):
+    for command in commands:
+        command_list=shlex.split(command)
+        result=subprocess.run(command_list,capture_output=True,text=True)
+        print("Command: "+command)
+        print("Command list: "+str(command_list))
+        print("Returncode: "+str(result.returncode))
+        print("Stdout: \n"+result.stdout)
+        print("Stderr: \n"+result.stderr)
+        print("\n=========================================================")
 
 def main():
     args=parse_args()
-    print(args.commands)
+    run(args.commands)
 
 if __name__ == "__main__":
     # execute only if run as a script
