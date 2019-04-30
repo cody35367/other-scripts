@@ -1,0 +1,4 @@
+[email]
+SMTP_SERVER=smtp.gmail.com
+SMTP_USER=user@gmail.com
+SMTP_PASSWORD=password
