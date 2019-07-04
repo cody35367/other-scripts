@@ -1,0 +1,4 @@
+Name=${NAME}
+Exec=${EXEC}
+Terminal=${TERMINAL}
+Type=${TYPE}
