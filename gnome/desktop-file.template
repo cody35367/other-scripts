@@ -1,3 +1,4 @@
+[Desktop Entry]
 Name=${NAME}
 Exec=${EXEC}
 Terminal=${TERMINAL}
