@@ -10,8 +10,8 @@ temp_mon(){
 }
 export -f temp_mon
 
-if [[ -n ${1} ]]; then
+if [[ -n ${1} && ${#} == 1 ]]; then
     watch -d -n ${1} -x bash -c temp_mon
 else
     temp_mon
-fi 
+fi
