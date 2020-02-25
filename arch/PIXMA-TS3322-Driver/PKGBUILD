@@ -1,0 +1,21 @@
+# Maintainer: Cody Hodges <cody35367@gmail.com>
+# License: GNU General Public License; version 2
+pkgname=cnijfilter2-ts3322
+pkgver=5.90
+pkgrel=1
+pkgdesc="Binaries for canon printers. Tested for PIXMA TS3322"
+arch=('x86_64')
+url="https://www.usa.canon.com/internet/portal/us/home/support/details/printers/support-inkjet-printer/ts-series/pixma-ts3322"
+license=('GNU General Public License v2')
+depends=('cups' 'ghostscript')
+options=('!emptydirs' '!strip')
+install=$pkgname.install
+source=("cnijfilter2-${pkgver}_amd64.deb::http://gdlp01.c-wss.com/gds/2/0100010482/01/cnijfilter2-${pkgver}-1-deb.tar.gz")
+md5sums=('368cf7466336eb77d4f8661e01be5da3')
+
+package() {
+  msg2 "Extracting the common debian archive."
+  ar vx "cnijfilter2-${pkgver}-1-deb/packages/cnijfilter2_${pkgver}-1_amd64.deb"
+  msg2 "Extracting the data.tar.gz component of the debian archive."
+  tar xzvf data.tar.gz -C "$pkgdir/"
+}
