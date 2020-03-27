@@ -111,11 +111,13 @@ for ip in ${SSH_IPS}; do
         ip="${SSH_USERS}@${ip}"
     fi
     if [[ -z ${REMOTE_COMMAND} ]]; then
+        echo
         echo "Running \"${LOCAL_SCRIPT} ${PASS_THRU_ARGS[@]}\" on ${ip}:"
         ssh < "${LOCAL_SCRIPT}" ${ip} "bash -s -- ${PASS_THRU_ARGS[@]}"
     else
+        echo
         echo "Running \"${REMOTE_COMMAND}\" on ${ip}:"
-        ssh ${ip} "${REMOTE_COMMAND}"
+        ssh -t ${ip} "${REMOTE_COMMAND}"
     fi
 done
 #####################################################################
