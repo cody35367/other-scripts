@@ -1,0 +1,90 @@
+#!/bin/bash
+set -e
+if [[ ! -z ${SUDO_USER} ]]; then
+  echo "Please do not run as sudo!"
+  exit 1
+fi
+
+function usage(){
+    echo \
+"Usage: 
+    $0 [-g|--gnome-ext] [-n|--nvidia]
+    
+    -g|--gnome-ext      Open firefox to install the gnome extensions.
+    -n|--nvidia         Install the nvidia driver.
+    -h|--help           Display this menu.
+                        
+    Example:
+        $0 --gnome-ext --nvidia"
+}
+
+INSTALL_GNOME_EXTENSIONS=0
+INSTALL_NVIDIA=0
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -g|--gnome-ext)
+        INSTALL_GNOME_EXTENSIONS=1
+        shift
+        ;;
+        -n|--nvidia)
+        INSTALL_NVIDIA=1
+        shift
+        ;;
+        -h|--help)
+        usage
+        exit 0
+        shift
+        ;;
+        -*|--*)
+        echo "Error: Unsupported flag \"$1\""
+        echo
+        usage
+        exit 1
+        ;;
+        *)
+        echo "Error: Unsupported positional \"$1\""
+        exit 2
+        shift
+        ;;
+    esac
+done
+
+sudo dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+sudo dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+
+sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
+sudo dnf check-update --refresh
+sudo dnf install -y \
+    chromium \
+    vim \
+    git \
+    nmap \
+    whois \
+    gnome-tweaks \
+    wireshark \
+    fish \
+    tilix \
+    flameshot \
+    curl \
+    deja-dup \
+    code \
+    virt-manager \
+    libvirt \
+    vlc \
+    ffmpeg
+
+sudo systemctl enable libvirtd --now
+
+if [[ ${INSTALL_NVIDIA} == 1 ]]; then
+    sudo dnf install -y akmod-nvidia
+fi 
+
+if [[ ${INSTALL_GNOME_EXTENSIONS} == 1 ]]; then
+    firefox https://extensions.gnome.org/extension/118/no-topleft-hot-corner/ &
+    firefox https://extensions.gnome.org/extension/615/appindicator-support/ &
+fi
+
+git config --global user.email "cody35367@gmail.com"
+git config --global user.name "Cody Hodges"
