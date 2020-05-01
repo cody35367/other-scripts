@@ -80,7 +80,9 @@ sudo dnf install -y \
     libvirt \
     vlc \
     ffmpeg \
-    util-linux-user
+    util-linux-user \
+    java-11-openjdk \
+    steam
 
 sudo systemctl enable libvirtd --now
 
@@ -104,6 +106,12 @@ if [[ ${INSTALL_GNOME_EXTENSIONS} == 1 ]]; then
 fi
 
 cd "$(dirname "$0")"
+
+mkdir -vp ~/Games ~/Downloads/installed
+curl -L https://launcher.mojang.com/download/Minecraft.tar.gz -o ~/Downloads/installed/Minecraft.tar.gz
+rm -rfv ~/Games/minecraft-launcher/
+tar -xzf ~/Downloads/installed/Minecraft.tar.gz -C ~/Games
+
 ../gnome/set_backgrounds.sh
 ../gnome/create_startup_desktop_file.py ../gnome/brightness.sh
 ../gnome/create_startup_desktop_file.py ../gnome/custom_suspend.py
