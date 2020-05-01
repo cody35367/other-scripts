@@ -88,11 +88,6 @@ if [[ ${INSTALL_NVIDIA} == 1 ]]; then
     sudo dnf install -y akmod-nvidia
 fi 
 
-if [[ ${INSTALL_GNOME_EXTENSIONS} == 1 ]]; then
-    firefox https://extensions.gnome.org/extension/118/no-topleft-hot-corner/ &
-    firefox https://extensions.gnome.org/extension/615/appindicator-support/ &
-fi
-
 git config --global user.email "cody35367@gmail.com"
 git config --global user.name "Cody Hodges"
 
@@ -102,3 +97,14 @@ fish -c 'set -U fish_greeting'
 if [[ ${DO_SSH_KEYGEN} == 1 ]]; then
     ssh-keygen
 fi
+
+if [[ ${INSTALL_GNOME_EXTENSIONS} == 1 ]]; then
+    firefox https://extensions.gnome.org/extension/118/no-topleft-hot-corner/ &
+    firefox https://extensions.gnome.org/extension/615/appindicator-support/ &
+fi
+
+cd "$(dirname "$0")"
+../gnome/set_backgrounds.sh
+../gnome/create_startup_desktop_file.py ../gnome/brightness.sh
+../gnome/create_startup_desktop_file.py ../gnome/custom_suspend.py
+../gnome/gen_desktop_file.py ../linux-gaming/Minecraft.sh ~/.local/share/applications/Minecraft.desktop
