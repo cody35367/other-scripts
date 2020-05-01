@@ -16,7 +16,7 @@ function usage(){
     -h|--help           Display this menu.
                         
     Example:
-        $0 --gnome-ext --nvidia"
+        $0 --gnome-ext --nvidia --ssh-keygen"
 }
 
 INSTALL_GNOME_EXTENSIONS=0
@@ -79,7 +79,8 @@ sudo dnf install -y \
     virt-manager \
     libvirt \
     vlc \
-    ffmpeg
+    ffmpeg \
+    util-linux-user
 
 sudo systemctl enable libvirtd --now
 
@@ -94,6 +95,9 @@ fi
 
 git config --global user.email "cody35367@gmail.com"
 git config --global user.name "Cody Hodges"
+
+sudo chsh -s /usr/bin/fish ${USER}
+fish -c 'set -U fish_greeting'
 
 if [[ ${DO_SSH_KEYGEN} == 1 ]]; then
     ssh-keygen
