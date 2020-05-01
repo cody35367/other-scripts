@@ -98,6 +98,7 @@ sudo dnf install -y \
     vlc \
     ffmpeg \
     util-linux-user \
+    buildah \
     toolbox
 
 sudo systemctl enable libvirtd --now
