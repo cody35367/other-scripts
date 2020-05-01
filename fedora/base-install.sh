@@ -8,10 +8,11 @@ fi
 function usage(){
     echo \
 "Usage: 
-    $0 [-g|--gnome-ext] [-n|--nvidia]
+    $0 [-g|--gnome-ext] [-n|--nvidia] [-s|--ssh-keygen]
     
     -g|--gnome-ext      Open firefox to install the gnome extensions.
     -n|--nvidia         Install the nvidia driver.
+    -s|--ssh-keygen     Generate SSH keys
     -h|--help           Display this menu.
                         
     Example:
@@ -20,6 +21,7 @@ function usage(){
 
 INSTALL_GNOME_EXTENSIONS=0
 INSTALL_NVIDIA=0
+DO_SSH_KEYGEN=0
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -29,6 +31,10 @@ while [[ $# -gt 0 ]]; do
         ;;
         -n|--nvidia)
         INSTALL_NVIDIA=1
+        shift
+        ;;
+        -s|--ssh-keygen)
+        DO_SSH_KEYGEN=1
         shift
         ;;
         -h|--help)
@@ -88,3 +94,7 @@ fi
 
 git config --global user.email "cody35367@gmail.com"
 git config --global user.name "Cody Hodges"
+
+if [[ ${DO_SSH_KEYGEN} == 1 ]]; then
+    ssh-keygen
+fi
