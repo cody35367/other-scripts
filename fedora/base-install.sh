@@ -8,20 +8,24 @@ fi
 function usage(){
     echo \
 "Usage: 
-    $0 [-g|--gnome-ext] [-n|--nvidia] [-s|--ssh-keygen]
+    $0 [-g|--gnome-ext] [-n|--nvidia] [-s|--ssh-keygen] [--gaming] [-a|--all]
     
     -g|--gnome-ext      Open firefox to install the gnome extensions.
     -n|--nvidia         Install the nvidia driver.
     -s|--ssh-keygen     Generate SSH keys
+    --gaming            Install gaming stuff like steam and Minecraft
+    -a|--all            Install all the above.
     -h|--help           Display this menu.
                         
     Example:
-        $0 --gnome-ext --nvidia --ssh-keygen"
+        $0 --gnome-ext --nvidia --ssh-keygen
+        $0 --all"
 }
 
 INSTALL_GNOME_EXTENSIONS=0
 INSTALL_NVIDIA=0
 DO_SSH_KEYGEN=0
+INSTALL_GAMING=0
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -35,6 +39,17 @@ while [[ $# -gt 0 ]]; do
         ;;
         -s|--ssh-keygen)
         DO_SSH_KEYGEN=1
+        shift
+        ;;
+        --gaming)
+        INSTALL_GAMING=1
+        shift
+        ;;
+        -a|--all)
+        INSTALL_GNOME_EXTENSIONS=1
+        INSTALL_NVIDIA=1
+        DO_SSH_KEYGEN=1
+        INSTALL_GAMING=1
         shift
         ;;
         -h|--help)
@@ -56,9 +71,11 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-sudo dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
-sudo dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+cd "$(dirname "$0")"
 
+sudo dnf install -y \
+    https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
+    https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
 sudo dnf check-update --refresh
@@ -81,20 +98,17 @@ sudo dnf install -y \
     vlc \
     ffmpeg \
     util-linux-user \
-    java-11-openjdk \
-    steam
+    toolbox
 
 sudo systemctl enable libvirtd --now
+git config --global user.email "cody35367@gmail.com"
+git config --global user.name "Cody Hodges"
+sudo chsh -s /usr/bin/fish ${USER}
+fish -c 'set -U fish_greeting'
 
 if [[ ${INSTALL_NVIDIA} == 1 ]]; then
     sudo dnf install -y akmod-nvidia
 fi 
-
-git config --global user.email "cody35367@gmail.com"
-git config --global user.name "Cody Hodges"
-
-sudo chsh -s /usr/bin/fish ${USER}
-fish -c 'set -U fish_greeting'
 
 if [[ ${DO_SSH_KEYGEN} == 1 ]]; then
     ssh-keygen
@@ -105,12 +119,15 @@ if [[ ${INSTALL_GNOME_EXTENSIONS} == 1 ]]; then
     firefox https://extensions.gnome.org/extension/615/appindicator-support/ &
 fi
 
-cd "$(dirname "$0")"
-
-mkdir -vp ~/Games ~/Downloads/installed
-curl -L https://launcher.mojang.com/download/Minecraft.tar.gz -o ~/Downloads/installed/Minecraft.tar.gz
-rm -rfv ~/Games/minecraft-launcher/
-tar -xzf ~/Downloads/installed/Minecraft.tar.gz -C ~/Games
+if [[ ${INSTALL_GAMING} == 1 ]]; then
+    sudo dnf install -y \
+        java-11-openjdk \
+        steam
+    mkdir -vp ~/Games ~/Downloads/installed
+    curl -L https://launcher.mojang.com/download/Minecraft.tar.gz -o ~/Downloads/installed/Minecraft.tar.gz
+    rm -rfv ~/Games/minecraft-launcher/
+    tar -xzf ~/Downloads/installed/Minecraft.tar.gz -C ~/Games
+fi
 
 ../gnome/set_backgrounds.sh
 ../gnome/create_startup_desktop_file.py ../gnome/brightness.sh
