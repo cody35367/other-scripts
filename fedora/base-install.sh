@@ -134,3 +134,8 @@ fi
 ../gnome/create_startup_desktop_file.py ../gnome/brightness.sh
 ../gnome/create_startup_desktop_file.py ../gnome/custom_suspend.py
 ../gnome/gen_desktop_file.py ../linux-gaming/Minecraft.sh ~/.local/share/applications/Minecraft.desktop
+mkdir -pv ~/.local/bin
+if ! fish -c 'echo $fish_user_paths' | grep -q ${HOME}/.local/bin; then
+    fish -c 'set -Up fish_user_paths ~/.local/bin'
+fi
+fish -c 'fish_update_completions'
