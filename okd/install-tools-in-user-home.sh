@@ -24,3 +24,13 @@ echo
 echo "Installed the following in \"${USER_HOME_BIN_PATH}\":"
 tar -xvzf ${USER_DOWNLOADS_DIR}${CURRENT_RELEASE_CLIENT_TAR} -C ${USER_HOME_BIN_PATH} oc kubectl
 tar -xvzf ${USER_DOWNLOADS_DIR}${CURRENT_RELEASE_INSTALL_TAR} -C ${USER_HOME_BIN_PATH} openshift-install
+
+echo
+echo "oc version --client:"
+echo "  $(oc version --client)"
+echo "kubectl version --client:"
+echo "  $(kubectl version --client)"
+echo "openshift-install version:"
+output=$(openshift-install version)
+echo "  ${output//$'\n'/$'\n'  }"
+echo
