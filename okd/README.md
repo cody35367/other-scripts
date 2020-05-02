@@ -20,4 +20,17 @@ Based the guide [here](https://docs.fedoraproject.org/en-US/quick-docs/using-nes
 2. Setup the libvirt+KVM VM in virt-manager. Be sure to follow the setup notes [here](https://docs.fedoraproject.org/en-US/quick-docs/using-nested-virtualization-in-kvm/#proc_configuring-nested-virtualization-in-virt-manager) when setting up the virtual CPU.
 3. Boot the ISO into the installer.
 4. Run through the installer.
+    - set hostname
+    - connect to network
+    - did auto partitioning
+    - only set a root password
+5. Once the VM comes up from reboot, connect to https://\<ip>:9090/
+
+Backup/Restore VM config (not virtual disk).
+```bash
+# How I backed up (included in this repo)
+sudo virsh dumpxml oVirt > oVirt.xml
+# Restore
+sudo virsh define ./oVirt.xml
+```
 ## Setup the OKD cluster
