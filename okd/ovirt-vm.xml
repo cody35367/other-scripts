@@ -1,13 +1,13 @@
 <domain type='kvm'>
-  <name>oVirt</name>
-  <uuid>53240d82-fd67-48e9-b9f8-319e69217c7e</uuid>
+  <name>ovirt-vm</name>
+  <uuid>cf1530cb-f951-4e95-aa0b-1eb2f061fae4</uuid>
   <metadata>
     <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">
       <libosinfo:os id="http://centos.org/centos/7.0"/>
     </libosinfo:libosinfo>
   </metadata>
-  <memory unit='KiB'>8392704</memory>
-  <currentMemory unit='KiB'>8392704</currentMemory>
+  <memory unit='KiB'>10485760</memory>
+  <currentMemory unit='KiB'>10485760</currentMemory>
   <vcpu placement='static'>4</vcpu>
   <os>
     <type arch='x86_64' machine='pc-q35-4.2'>hvm</type>
@@ -35,7 +35,7 @@
     <emulator>/usr/bin/qemu-system-x86_64</emulator>
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2'/>
-      <source file='/var/lib/libvirt/images/oVirt.qcow2'/>
+      <source file='/var/lib/libvirt/images/ovirt-vm.qcow2'/>
       <target dev='vda' bus='virtio'/>
       <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>
     </disk>
@@ -91,8 +91,8 @@
       <address type='pci' domain='0x0000' bus='0x03' slot='0x00' function='0x0'/>
     </controller>
     <interface type='network'>
-      <mac address='52:54:00:64:90:06'/>
-      <source network='default'/>
+      <mac address='52:54:00:00:00:01'/>
+      <source network='ovirt-net'/>
       <model type='virtio'/>
       <address type='pci' domain='0x0000' bus='0x01' slot='0x00' function='0x0'/>
     </interface>

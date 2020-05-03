@@ -17,26 +17,7 @@ Based the guide [here](https://docs.fedoraproject.org/en-US/quick-docs/using-nes
 ```
 ## Setup oVirt as a VM
 1. Download the latest oVirt stable [here](https://www.ovirt.org/download/node.html).
-2. Setup the libvirt+KVM VM in virt-manager. Be sure to follow the setup notes [here](https://docs.fedoraproject.org/en-US/quick-docs/using-nested-virtualization-in-kvm/#proc_configuring-nested-virtualization-in-virt-manager) when setting up the virtual CPU. Allocated 4 CPUs, 10 GB of RAM, 100 GB of storage.
-3. Boot the ISO into the installer.
-4. Run through the installer.
-    - set hostname
-    - connect to network
-    - Partition 10 GB Swap, / remaining
-    - only set a root password
-5. Once the VM comes up from reboot, login to tty. Do the following:
-    - ```bash
-      # On physical host
-      python3 -m http.server
-      # On ovirt VM
-      curl 10.0.0.1/setup-ovirt-host.sh -o setup-ovirt-host.sh
-      chmod u+x setup-ovirt-host.sh
-      ./setup-ovirt-host.sh
-      ```
-6. Login with root account, navigate to Virtualization -> Start under Hosted Engine to setup.
-    - 
-
-Backup/Restore VM config (not virtual disk).
+2. Setup the libvirt+KVM VM in virt-manager. Be sure to follow the setup notes [here](https://docs.fedoraproject.org/en-US/quick-docs/using-nested-virtualization-in-kvm/#proc_configuring-nested-virtualization-in-virt-manager) when setting up the virtual CPU. Allocated 4 CPUs, 10 GB of RAM, 120 GB of storage. Use the below to Backup/Restore VM config (not virtual disk).
 ```bash
 # How I backed up (included in this repo)
 sudo virsh dumpxml ovirt-vm > ./ovirt-vm.xml
@@ -47,4 +28,27 @@ sudo virsh net-destroy ovirt-net
 sudo virsh net-define ./ovirt-net.xml
 sudo virsh net-start ovirt-net
 ```
+3. Boot the ISO into the installer.
+4. Run through the installer.
+    - Set language and keyboard layout
+    - Set timezone
+    - Set keyboard layout again
+    - Set hostname
+    - Connect to network
+    - Partition LVM Thin Provision
+        - 1020 MiB /boot vda1
+        - 75.16 GiB / onn_ovirt-root
+        - 15 GiB /var onn_ovirt-var
+        - 5056 MiB swap onn_ovirt_swap
+    - Only set a root password
+5. Once the VM comes up from reboot, login to tty. Do the following:
+```bash
+# On physical host
+python3 -m http.server
+# On ovirt VM
+curl 10.0.0.1:8000/setup-ovirt-host.sh -o setup-ovirt-host.sh
+chmod u+x setup-ovirt-host.sh
+./setup-ovirt-host.sh
+```
+6. Login with root account, navigate to Virtualization -> Start under Hosted Engine to setup.
 ## Setup the OKD cluster
