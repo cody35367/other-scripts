@@ -1,21 +1,31 @@
 # OKD Setup
 A guide for setting OKD on oVirt. oVirt will be setup as a VM and will use nested virtualization to host the OKD cluster. I have only tested this process on Fedora 32 Workstation.
+
+https://github.com/openshift/okd
 ## Overview
-- [Install Client tools](#Install-Client-tools)
-- [Setup nested virtualization](#Setup-nested-virtualization)
-- [Setup oVirt as a VM](#Setup-oVirt-as-a-VM)
-- [Setup the OKD cluster](#Setup-the-OKD-cluster)
-## Install Client tools
+- [libvirt](#libvirt)
+- [oVirt](#oVirt)
+    - [Install Client tools](#Install-Client-tools)
+    - [Setup nested virtualization](#Setup-nested-virtualization)
+    - [Setup oVirt as a VM](#Setup-oVirt-as-a-VM)
+    - [Setup the OKD cluster](#Setup-the-OKD-cluster)
+## libvirt
+- Based on this:
+    - https://github.com/openshift/okd/blob/master/Guides/UPI/libvirt/libvirt.md
+## oVirt
+- **!!THIS FAILED AND IS NOT WORKING!!**
+- Kept for reference
+### Install Client tools
 Use the below script to install in your home directory.
 ```bash
 ./install-tools-in-user-home.sh
 ```
-## Setup nested virtualization
+### Setup nested virtualization
 Based the guide [here](https://docs.fedoraproject.org/en-US/quick-docs/using-nested-virtualization-in-kvm/). Run the below script to set this up.
 ```bash
 ./setup-nested-virtualization.sh
 ```
-## Setup oVirt as a VM
+### Setup oVirt as a VM
 1. Download the latest oVirt stable [here](https://www.ovirt.org/download/node.html).
 2. Setup the libvirt+KVM VM in virt-manager. Be sure to follow the setup notes [here](https://docs.fedoraproject.org/en-US/quick-docs/using-nested-virtualization-in-kvm/#proc_configuring-nested-virtualization-in-virt-manager) when setting up the virtual CPU. Allocated 4 CPUs, 10 GB of RAM, 120 GB of storage. Use the below to Backup/Restore VM config (not virtual disk).
 ```bash
@@ -70,7 +80,7 @@ chmod u+x setup-ovirt-host.sh
         - Storage Type: NFS
         - Storage Connection: 10.0.0.2:/nfs
     - Finish
-        - Finish Deployment
+        - Finish Deployment, will take a long time also.
 7. Edit physical hosts file to map from `10.0.0.3 ovirt-e`
 8. Go to https://ovirt-e/ovirt-engine/
     - Login: https://ovirt-e/ovirt-engine/sso/login.html
@@ -81,4 +91,20 @@ chmod u+x setup-ovirt-host.sh
     - REST API: https://ovirt-e/ovirt-engine/api/
         - admin@internal
         - password setup under above Engine setup.
-## Setup the OKD cluster
+### Setup the OKD cluster
+1. Run `openshift-install create cluster` | **!!THIS FAILED AND IS NOT WORKING!!**
+    - Select SSH public key
+    - Platform: ovirt
+    - Enter oVirt's api endpoint URL: https://ovirt-e/ovirt-engine/api
+    - Is the installed oVirt certificate trusted (Y/n): n
+    - Enter ovirt-engine username: press enter to use default admin@internal
+    - Enter password: password setup under above Engine setup.
+    - Select the oVirt cluster: Default
+    - Select the oVirt storage domain: hosted_storage
+    - Select the oVirt network: ovirtmgmt
+    - Enter the internal API Virtual IP: 10.0.0.4
+    - Enter the internal DNS Virtual IP: 10.0.0.5
+    - Enter the ingress IP: 10.0.0.6
+    - Base Domain: ovirt-net
+    - Cluster Name: demo
+    - Pull Secret: enter and leave blank.
