@@ -44,11 +44,41 @@ sudo virsh net-start ovirt-net
 5. Once the VM comes up from reboot, login to tty. Do the following:
 ```bash
 # On physical host
+sudo firewall-cmd --add-port 8000/tcp --zone libvirt
 python3 -m http.server
 # On ovirt VM
 curl 10.0.0.1:8000/setup-ovirt-host.sh -o setup-ovirt-host.sh
 chmod u+x setup-ovirt-host.sh
 ./setup-ovirt-host.sh
 ```
-6. Login with root account, navigate to Virtualization -> Start under Hosted Engine to setup.
+6. Go to https://10.0.0.2:9090/ login with root account, navigate to Virtualization -> Start under Hosted Engine to setup.
+    - VM
+        - Engine VM FQDN: ovirt-e
+        - MAC Address: 52:54:00:00:00:02
+        - Network Configuration: DHCP
+        - Bridge Interface: eth0
+        - Root Password: \<whatever>
+        - Root SSH Access: Yes
+        - Number of Virtual CPUs: 2
+        - Memory Size (MiB) 4096
+    - Engine
+        - Admin Portal Password: \<whatever>
+        - Notification/Email Settings: leave default
+    - Prepare VM
+        - Run the prepare, will take a long time.
+    - Storage
+        - Storage Type: NFS
+        - Storage Connection: 10.0.0.2:/nfs
+    - Finish
+        - Finish Deployment
+7. Edit physical hosts file to map from `10.0.0.3 ovirt-e`
+8. Go to https://ovirt-e/ovirt-engine/
+    - Login: https://ovirt-e/ovirt-engine/sso/login.html
+        - admin
+        - password setup under above Engine setup.
+    - Administration Portal: https://ovirt-e/ovirt-engine/webadmin/
+    - VM Portal: https://ovirt-e/ovirt-engine/web-ui/
+    - REST API: https://ovirt-e/ovirt-engine/api/
+        - admin@internal
+        - password setup under above Engine setup.
 ## Setup the OKD cluster
