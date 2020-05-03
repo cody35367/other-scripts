@@ -17,20 +17,34 @@ Based the guide [here](https://docs.fedoraproject.org/en-US/quick-docs/using-nes
 ```
 ## Setup oVirt as a VM
 1. Download the latest oVirt stable [here](https://www.ovirt.org/download/node.html).
-2. Setup the libvirt+KVM VM in virt-manager. Be sure to follow the setup notes [here](https://docs.fedoraproject.org/en-US/quick-docs/using-nested-virtualization-in-kvm/#proc_configuring-nested-virtualization-in-virt-manager) when setting up the virtual CPU.
+2. Setup the libvirt+KVM VM in virt-manager. Be sure to follow the setup notes [here](https://docs.fedoraproject.org/en-US/quick-docs/using-nested-virtualization-in-kvm/#proc_configuring-nested-virtualization-in-virt-manager) when setting up the virtual CPU. Allocated 4 CPUs, 10 GB of RAM, 100 GB of storage.
 3. Boot the ISO into the installer.
 4. Run through the installer.
     - set hostname
     - connect to network
-    - did auto partitioning
+    - Partition 10 GB Swap, / remaining
     - only set a root password
-5. Once the VM comes up from reboot, connect to https://\<ip>:9090/
+5. Once the VM comes up from reboot, login to tty. Do the following:
+    - ```bash
+      # On physical host
+      python3 -m http.server
+      # On ovirt VM
+      curl 10.0.0.1/setup-ovirt-host.sh -o setup-ovirt-host.sh
+      chmod u+x setup-ovirt-host.sh
+      ./setup-ovirt-host.sh
+      ```
+6. Login with root account, navigate to Virtualization -> Start under Hosted Engine to setup.
+    - 
 
 Backup/Restore VM config (not virtual disk).
 ```bash
 # How I backed up (included in this repo)
-sudo virsh dumpxml oVirt > oVirt.xml
+sudo virsh dumpxml ovirt-vm > ./ovirt-vm.xml
+sudo virsh net-dumpxml ovirt-net > ./ovirt-net.xml
 # Restore
-sudo virsh define ./oVirt.xml
+sudo virsh define ./ovirt-vm.xml
+sudo virsh net-destroy ovirt-net
+sudo virsh net-define ./ovirt-net.xml
+sudo virsh net-start ovirt-net
 ```
 ## Setup the OKD cluster
