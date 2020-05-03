@@ -3,14 +3,43 @@ A guide for setting OKD on oVirt. oVirt will be setup as a VM and will use neste
 
 https://github.com/openshift/okd
 ## Overview
+- [CRC](#CRC)
+- [Minishift](#Minishift)
 - [libvirt](#libvirt)
 - [oVirt](#oVirt)
     - [Install Client tools](#Install-Client-tools)
     - [Setup nested virtualization](#Setup-nested-virtualization)
     - [Setup oVirt as a VM](#Setup-oVirt-as-a-VM)
     - [Setup the OKD cluster](#Setup-the-OKD-cluster)
+## CRC
+- Used for OpenShift 4.X
+    - https://github.com/code-ready/crc
+- Releases
+    - https://github.com/code-ready/crc/releases
+- Docs
+    - https://code-ready.github.io/crc/
+- Setup
+    - Go to (here)[https://cloud.redhat.com/openshift/install/crc/installer-provisioned] and setup a pull secret. 
+    - Ensure `libvirt` and `NetworkManager` are installed.
+    - Run the below to install `crc` bin `$PATH`
+```bash
+# Install
+./install-crc-in-user-home.sh
+# Remove
+rm ~/.local/bin/crc ~/Downloads/installed/crc-linux-amd64.tar.xz
+# Setup tool
+crc setup
+# Start a cluster
+crc start
+# For everything else.
+crc -h
+crc start -h
+```
+## Minishift
+- Used for OpenShift 3.X
+    - https://github.com/minishift/minishift
 ## libvirt
-- Based on this:
+- Follow this:
     - https://github.com/openshift/okd/blob/master/Guides/UPI/libvirt/libvirt.md
 ## oVirt
 - **!!THIS FAILED AND IS NOT WORKING!!**
@@ -18,7 +47,10 @@ https://github.com/openshift/okd
 ### Install Client tools
 Use the below script to install in your home directory.
 ```bash
+# Install
 ./install-tools-in-user-home.sh
+# Remove
+rm ~/.local/bin/{kubectl,oc,openshift-install}
 ```
 ### Setup nested virtualization
 Based the guide [here](https://docs.fedoraproject.org/en-US/quick-docs/using-nested-virtualization-in-kvm/). Run the below script to set this up.
