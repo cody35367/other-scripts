@@ -1,5 +1,5 @@
 # OKD Setup
-A guide for setting OKD on oVirt. oVirt will be setup as a VM and will use nested virtualization to host the OKD cluster. I have only tested this process on Fedora 32 Workstation.
+Different methods for setting up OKD (sometimes OpenShift) on localhost.
 
 https://github.com/openshift/okd
 ## Overview
@@ -44,6 +44,7 @@ crc start -h
 ## oVirt
 - **!!THIS FAILED AND IS NOT WORKING!!**
 - Kept for reference
+- A guide for setting OKD on oVirt. oVirt will be setup as a VM and will use nested virtualization to host the OKD cluster. I have only tested this process on Fedora 32 Workstation.
 ### Install Client tools
 Use the below script to install in your home directory.
 ```bash
