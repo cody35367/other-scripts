@@ -19,18 +19,20 @@ https://github.com/openshift/okd
 - Docs
     - https://code-ready.github.io/crc/
 - Setup
-    - Go to (here)[https://cloud.redhat.com/openshift/install/crc/installer-provisioned] and setup a pull secret. 
+    - Go to [here](https://cloud.redhat.com/openshift/install/crc/installer-provisioned) and download pull-secret.json/pull-secret.txt. 
     - Ensure `libvirt` and `NetworkManager` are installed.
     - Run the below to install `crc` bin `$PATH`
 ```bash
 # Install
 ./install-crc-in-user-home.sh
 # Remove
-rm ~/.local/bin/crc ~/Downloads/installed/crc-linux-amd64.tar.xz
-# Setup tool
+rm -v ~/.local/bin/crc ~/Downloads/installed/crc-linux-amd64.tar.xz
+# Setup tool (Run again if you see "FATA Failed to check if libvirtd service is active")
 crc setup
 # Start a cluster
 crc start
+# Start a cluster with pull-secret.json (downloaded from Red Hat portal).
+crc start -p ./pull-secret.json
 # For everything else.
 crc -h
 crc start -h

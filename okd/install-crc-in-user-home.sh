@@ -4,14 +4,14 @@ set -e
 
 USER_HOME_BIN_PATH="${HOME}/.local/bin/"
 USER_DOWNLOADS_DIR="${HOME}/Downloads/installed/"
-CRC_DOWNLOAD_URL="https://mirror.openshift.com/pub/openshift-v4/clients/crc/1.9.0/crc-linux-amd64.tar.xz"
-CRC_CHECKSUM_URL="https://mirror.openshift.com/pub/openshift-v4/clients/crc/1.9.0/sha256sum.txt"
-CRC_TAR_PATHS=("crc-linux-1.9.0-amd64/crc")
+CRC_DOWNLOAD_URL="https://mirror.openshift.com/pub/openshift-v4/clients/crc/latest/crc-linux-amd64.tar.xz"
+CRC_CHECKSUM_URL="https://mirror.openshift.com/pub/openshift-v4/clients/crc/latest/sha256sum.txt"
+CRC_TAR_PATHS=("crc-linux-*-amd64/crc")
 CRC_DOWNLOAD_FILE="crc-linux-amd64.tar.xz"
 CRC_CHECKSUM_FILE="sha256sum.txt"
 
 mkdir -pv ${USER_DOWNLOADS_DIR}
-if ! [[ -e ${USER_DOWNLOADS_DIR}${CRC_DOWNLOAD_FILE} ]]; then
+if [[ ! -f ${USER_DOWNLOADS_DIR}${CRC_DOWNLOAD_FILE} || $1 == "-r" ]]; then
     curl ${CRC_DOWNLOAD_URL} -o ${USER_DOWNLOADS_DIR}${CRC_DOWNLOAD_FILE}
 fi
 curl ${CRC_CHECKSUM_URL} -o ${USER_DOWNLOADS_DIR}${CRC_CHECKSUM_FILE}
