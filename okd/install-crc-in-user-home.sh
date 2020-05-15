@@ -13,8 +13,8 @@ CRC_CHECKSUM_FILE="sha256sum.txt"
 mkdir -pv ${USER_DOWNLOADS_DIR}
 if [[ ! -f ${USER_DOWNLOADS_DIR}${CRC_DOWNLOAD_FILE} || $1 == "-r" ]]; then
     curl ${CRC_DOWNLOAD_URL} -o ${USER_DOWNLOADS_DIR}${CRC_DOWNLOAD_FILE}
+    curl ${CRC_CHECKSUM_URL} -o ${USER_DOWNLOADS_DIR}${CRC_CHECKSUM_FILE}
 fi
-curl ${CRC_CHECKSUM_URL} -o ${USER_DOWNLOADS_DIR}${CRC_CHECKSUM_FILE}
 cd "${USER_DOWNLOADS_DIR}"
 if ! sha256sum --ignore-missing -c "./${CRC_CHECKSUM_FILE}"; then
     echo "Error verifying checksums."
