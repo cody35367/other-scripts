@@ -4,13 +4,12 @@ set -e
 
 USER_HOME_BIN_PATH="${HOME}/.local/bin/"
 USER_DOWNLOADS_DIR="${HOME}/Downloads/installed/"
-LATEST_OC_DOWNLOAD_URL="https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz"
-LATEST_OC_DOWNLOAD_FILE="oc.tar.gz"
 REGISTRY_URL="quay.io/openshift/okd:4.4.0-0.okd-2020-04-21-163702-beta4"
 
 mkdir -pv ${USER_DOWNLOADS_DIR}
-curl -L ${LATEST_OC_DOWNLOAD_URL} -o ${USER_DOWNLOADS_DIR}${LATEST_OC_DOWNLOAD_FILE}
-tar -xzf ${USER_DOWNLOADS_DIR}${LATEST_OC_DOWNLOAD_FILE} -C ${USER_HOME_BIN_PATH} oc
+if ! which oc; then
+    "$(dirname "$0")/install-oc-in-user-home.sh"
+fi
 cd ${USER_DOWNLOADS_DIR}
 oc adm release extract --tools ${REGISTRY_URL}
 if ! sha256sum -c ./sha256sum.txt; then
