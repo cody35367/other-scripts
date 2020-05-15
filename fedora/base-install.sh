@@ -99,7 +99,8 @@ sudo dnf install -y \
     ffmpeg \
     util-linux-user \
     buildah \
-    toolbox
+    toolbox \
+    npm
 
 sudo systemctl enable libvirtd --now
 git config --global user.email "cody35367@gmail.com"
