@@ -83,6 +83,8 @@ sudo dnf install -y \
     chromium \
     vim \
     git \
+    gitk \
+    git-gui \
     nmap \
     whois \
     gnome-tweaks \
