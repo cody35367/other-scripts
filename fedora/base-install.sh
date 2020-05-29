@@ -102,6 +102,7 @@ sudo dnf install -y \
     buildah \
     toolbox \
     npm
+sudo dnf install -y https://nmap.org/dist/zenmap-7.80-1.noarch.rpm
 
 sudo systemctl enable libvirtd --now
 git config --global user.email "cody35367@gmail.com"
