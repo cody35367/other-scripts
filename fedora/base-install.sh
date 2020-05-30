@@ -8,11 +8,11 @@ fi
 function usage(){
     echo \
 "Usage: 
-    $0 [-g|--gnome-ext] [-n|--nvidia] [-s|--ssh-keygen] [--gaming] [-a|--all]
+    $0 [--gnome] [--nvidia] [--ssh-keygen] [--gaming] [-a|--all]
     
-    -g|--gnome-ext      Open firefox to install the gnome extensions.
-    -n|--nvidia         Install the nvidia driver.
-    -s|--ssh-keygen     Generate SSH keys
+    --gnome          Setup and install things related to gnome.
+    --nvidia         Install the nvidia driver.
+    --ssh-keygen     Generate SSH keys
     --gaming            Install gaming stuff like steam and Minecraft
     -a|--all            Install all the above.
     -h|--help           Display this menu.
@@ -22,51 +22,51 @@ function usage(){
         $0 --all"
 }
 
-INSTALL_GNOME_EXTENSIONS=0
+GNOME_SETUP=0
 INSTALL_NVIDIA=0
 DO_SSH_KEYGEN=0
 INSTALL_GAMING=0
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        -g|--gnome-ext)
-        INSTALL_GNOME_EXTENSIONS=1
-        shift
+        --gnome)
+            GNOME_SETUP=1
+            shift
         ;;
-        -n|--nvidia)
-        INSTALL_NVIDIA=1
-        shift
+        --nvidia)
+            INSTALL_NVIDIA=1
+            shift
         ;;
-        -s|--ssh-keygen)
-        DO_SSH_KEYGEN=1
-        shift
+        --ssh-keygen)
+            DO_SSH_KEYGEN=1
+            shift
         ;;
         --gaming)
-        INSTALL_GAMING=1
-        shift
+            INSTALL_GAMING=1
+            shift
         ;;
         -a|--all)
-        INSTALL_GNOME_EXTENSIONS=1
-        INSTALL_NVIDIA=1
-        DO_SSH_KEYGEN=1
-        INSTALL_GAMING=1
-        shift
+            GNOME_SETUP=1
+            INSTALL_NVIDIA=1
+            DO_SSH_KEYGEN=1
+            INSTALL_GAMING=1
+            shift
         ;;
         -h|--help)
-        usage
-        exit 0
-        shift
+            usage
+            exit 0
+            shift
         ;;
         -*|--*)
-        echo "Error: Unsupported flag \"$1\""
-        echo
-        usage
-        exit 1
+            echo "Error: Unsupported flag \"$1\""
+            echo
+            usage
+            exit 1
         ;;
         *)
-        echo "Error: Unsupported positional \"$1\""
-        exit 2
-        shift
+            echo "Error: Unsupported positional \"$1\""
+            exit 2
+            shift
         ;;
     esac
 done
@@ -86,13 +86,11 @@ sudo dnf install -y \
     git-gui \
     nmap \
     whois \
-    gnome-tweaks \
     wireshark \
     fish \
     tilix \
     flameshot \
     curl \
-    deja-dup \
     code \
     virt-manager \
     libvirt \
@@ -101,7 +99,8 @@ sudo dnf install -y \
     util-linux-user \
     buildah \
     toolbox \
-    npm
+    npm \
+    htop
 sudo dnf install -y https://nmap.org/dist/zenmap-7.80-1.noarch.rpm
 
 sudo systemctl enable libvirtd --now
@@ -118,7 +117,14 @@ if [[ ${DO_SSH_KEYGEN} == 1 ]]; then
     ssh-keygen
 fi
 
-if [[ ${INSTALL_GNOME_EXTENSIONS} == 1 ]]; then
+if [[ ${GNOME_SETUP} == 1 ]]; then
+    sudo dnf install -y \
+        gnome-tweaks \
+        deja-dup
+    ../gnome/set_backgrounds.sh
+    ../gnome/create_startup_desktop_file.py ../gnome/brightness.sh
+    ../gnome/create_startup_desktop_file.py ../gnome/custom_suspend.py
+    ../gnome/gen_desktop_file.py ../linux-gaming/Minecraft.sh ~/.local/share/applications/Minecraft.desktop
     firefox https://extensions.gnome.org/extension/118/no-topleft-hot-corner/ &
     firefox https://extensions.gnome.org/extension/615/appindicator-support/ &
 fi
@@ -133,10 +139,6 @@ if [[ ${INSTALL_GAMING} == 1 ]]; then
     tar -xzf ~/Downloads/installed/Minecraft.tar.gz -C ~/Games
 fi
 
-../gnome/set_backgrounds.sh
-../gnome/create_startup_desktop_file.py ../gnome/brightness.sh
-../gnome/create_startup_desktop_file.py ../gnome/custom_suspend.py
-../gnome/gen_desktop_file.py ../linux-gaming/Minecraft.sh ~/.local/share/applications/Minecraft.desktop
 mkdir -pv ~/.local/bin
 if ! fish -c 'echo $fish_user_paths' | grep -q ${HOME}/.local/bin; then
     fish -c 'set -Up fish_user_paths ~/.local/bin'
