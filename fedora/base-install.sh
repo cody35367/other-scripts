@@ -124,7 +124,6 @@ if [[ ${GNOME_SETUP} == 1 ]]; then
     ../gnome/set_backgrounds.sh
     ../gnome/create_startup_desktop_file.py ../gnome/brightness.sh
     ../gnome/create_startup_desktop_file.py ../gnome/custom_suspend.py
-    ../gnome/gen_desktop_file.py ../linux-gaming/Minecraft.sh ~/.local/share/applications/Minecraft.desktop
     firefox https://extensions.gnome.org/extension/118/no-topleft-hot-corner/ &
     firefox https://extensions.gnome.org/extension/615/appindicator-support/ &
 fi
@@ -133,10 +132,17 @@ if [[ ${INSTALL_GAMING} == 1 ]]; then
     sudo dnf install -y \
         java-11-openjdk \
         steam
-    mkdir -vp ~/Games ~/Downloads/installed
+    mkdir -vp ~/Games ~/Downloads/installed ~/Applications
+    # Minecraft
     curl -L https://launcher.mojang.com/download/Minecraft.tar.gz -o ~/Downloads/installed/Minecraft.tar.gz
     rm -rfv ~/Games/minecraft-launcher/
     tar -xzf ~/Downloads/installed/Minecraft.tar.gz -C ~/Games
+    ../gnome/gen_desktop_file.py ../linux-gaming/Minecraft.sh ~/.local/share/applications/Minecraft.desktop
+    # Discord
+    curl -L "https://discord.com/api/download?platform=linux&format=tar.gz" -o ~/Downloads/installed/Discord.tar.gz
+    rm -rfv ~/Applications/Discord/
+    tar -xzf ~/Downloads/installed/Discord.tar.gz -C ~/Applications
+    ../gnome/gen_desktop_file.py ../linux-gaming/Discord.sh ~/.local/share/applications/Discord.desktop
 fi
 
 mkdir -pv ~/.local/bin
