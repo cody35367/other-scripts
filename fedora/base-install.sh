@@ -124,20 +124,15 @@ if [[ ${GNOME_SETUP} == 1 ]]; then
         deja-dup \
         xdotool \
         gnome-shell-extension-no-topleft-hot-corner \
-        gnome-shell-extension-appindicator \
-        gnome-shell-extension-freon \
-        gnome-shell-extension-system-monitor-applet
+        gnome-shell-extension-appindicator
     ../gnome/set_backgrounds.sh
     ../gnome/create_startup_desktop_file.py ../gnome/brightness.sh
     ../gnome/create_startup_desktop_file.py ../gnome/custom_suspend.py
-    sudo sensors-detect --auto
     xdotool key "Alt+F2+r" && sleep 0.5 && xdotool key "Return" && sleep 10
     #firefox https://extensions.gnome.org/extension/118/no-topleft-hot-corner/ &
     gnome-extensions enable nohotcorner@azuri.free.fr
     #firefox https://extensions.gnome.org/extension/615/appindicator-support/ &
     gnome-extensions enable appindicatorsupport@rgcjonas.gmail.com
-    gnome-extensions enable freon@UshakovVasilii_Github.yahoo.com
-    gnome-extensions enable system-monitor@paradoxxx.zero.gmail.com
     if [[ ${INSTALL_GAMING} == 1 ]]; then
         sudo dnf install -y \
             java-11-openjdk \
@@ -146,14 +141,16 @@ if [[ ${GNOME_SETUP} == 1 ]]; then
             gnome-shell-extension-gamemode
         mkdir -vp ~/Games ~/Downloads/installed ~/Applications
         # Minecraft
-        curl -L https://launcher.mojang.com/download/Minecraft.tar.gz -o ~/Downloads/installed/Minecraft.tar.gz
-        rm -rfv ~/Games/minecraft-launcher/
-        tar -xzf ~/Downloads/installed/Minecraft.tar.gz -C ~/Games
+        if [[ ! -d ~/Games/minecraft-launcher/ ]]; then
+            curl -L https://launcher.mojang.com/download/Minecraft.tar.gz -o ~/Downloads/installed/Minecraft.tar.gz
+            tar -xzf ~/Downloads/installed/Minecraft.tar.gz -C ~/Games
+        fi
         ../gnome/gen_desktop_file.py ../linux-gaming/Minecraft.sh ~/.local/share/applications/Minecraft.desktop
         # Discord
-        curl -L "https://discord.com/api/download?platform=linux&format=tar.gz" -o ~/Downloads/installed/Discord.tar.gz
-        rm -rfv ~/Applications/Discord/
-        tar -xzf ~/Downloads/installed/Discord.tar.gz -C ~/Applications
+        if [[ ! -d ~/Applications/Discord/ ]]; then
+            curl -L "https://discord.com/api/download?platform=linux&format=tar.gz" -o ~/Downloads/installed/Discord.tar.gz
+            tar -xzf ~/Downloads/installed/Discord.tar.gz -C ~/Applications
+        fi
         ../gnome/gen_desktop_file.py ../linux-gaming/Discord.sh ~/.local/share/applications/Discord.desktop
         # Gamemode extension
         gnome-extensions enable gamemode@christian.kellner.me
