@@ -1,0 +1,12 @@
+---
+all:
+  hosts:
+    rpi1:
+      ansible_user: pi
+      ansible_host: 192.168.125.11
+    rpi2:
+      ansible_user: pi
+      ansible_host: 192.168.125.12
+    clin2:
+      ansible_user: chodges
+      ansible_host: 192.168.125.12
