@@ -1,0 +1,76 @@
+---
+  - hosts: clin2
+    become_method: sudo
+    vars:
+      GROUP_LIST:
+        - smb_homes
+        - smb_general
+        - cody
+        - corrine
+      ALL_USERS_GROUPS:
+        - smb_homes
+        - smb_general
+      USER_LIST:
+        - cody
+        - corrine
+    tasks:
+      - name: Instal samba
+        dnf:
+          name: samba
+          state: latest
+        become: yes
+      - name: Put smb config file in place.
+        copy:
+          src: smb.conf
+          dest: /etc/samba/smb.conf
+          owner: root
+          group: root
+          mode: "0644"
+        become: yes
+      - name: Create groups
+        group:
+          name: "{{ item }}"
+        become: yes
+        with_items: "{{ GROUP_LIST }}"
+      - name: Create Users
+        user:
+          name: "{{ item }}"
+          home: "/data/zpool1/share/home/{{ item }}"
+          create_home: yes
+          group: "{{ item }}"
+          groups: "{{ ALL_USERS_GROUPS }}"
+        become: yes
+        with_items: "{{ USER_LIST }}"
+      - name: Create general
+        file: 
+          path: /data/zpool1/share/general
+          state: directory
+          owner: root
+          group: smb_general
+          mode: "2770"
+        become: yes
+      - name: Allow samba to modify files (SELinux)
+        sefcontext:
+          target: '/data/zpool1/share(/.*)?'
+          setype: samba_share_t
+          state: present
+        become: yes
+      - name: Enable/Restart smb
+        service:
+          name: smb
+          state: restarted
+          enabled: yes
+        become: yes
+      - name: Enable/Restart nmb
+        service:
+          name: nmb
+          state: restarted
+          enabled: yes
+        become: yes
+      - name: Enable smb through firewall
+        firewalld:
+          service: samba
+          permanent: yes
+          immediate: yes
+          state: enabled
+        become: yes
