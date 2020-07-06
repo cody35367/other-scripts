@@ -3,16 +3,17 @@
     become_method: sudo
     vars:
       GROUP_LIST:
-        - smb_homes
-        - smb_general
+        - smb-homes
+        - smb-general
         - cody
-        - corrine
+        - corinne
       ALL_USERS_GROUPS:
-        - smb_homes
-        - smb_general
+        - smb-homes
+        - smb-general
       USER_LIST:
         - cody
-        - corrine
+        - corinne
+      SHARE_DIRS: /data/test
     tasks:
       - name: Instal samba
         dnf:
@@ -35,25 +36,29 @@
       - name: Create Users
         user:
           name: "{{ item }}"
-          home: "/data/zpool1/share/home/{{ item }}"
+          home: "{{ SHARE_DIRS }}/home/{{ item }}"
           create_home: yes
+          shell: /sbin/nologin
           group: "{{ item }}"
           groups: "{{ ALL_USERS_GROUPS }}"
         become: yes
         with_items: "{{ USER_LIST }}"
       - name: Create general
         file: 
-          path: /data/zpool1/share/general
+          path: "{{ SHARE_DIRS }}/general"
           state: directory
           owner: root
-          group: smb_general
+          group: smb-general
           mode: "2770"
         become: yes
       - name: Allow samba to modify files (SELinux)
         sefcontext:
-          target: '/data/zpool1/share(/.*)?'
+          target: "{{ SHARE_DIRS }}(/.*)?"
           setype: samba_share_t
           state: present
+        become: yes
+      - name: Apply new SELinux file context to filesystem
+        command: "restorecon -irv {{ SHARE_DIRS }}"
         become: yes
       - name: Enable/Restart smb
         service:
