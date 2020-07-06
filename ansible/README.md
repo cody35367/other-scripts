@@ -19,6 +19,9 @@ sudo zfs set xattr=sa zpool1
 ## Setup Samaba
 ```bash
 ansible-playbook -i ./hi-clan.yml ./pb-centos8-samba.yml
+ssh 192.168.125.12
 sudo smbpasswd -a cody
 sudo smbpasswd -a corinne
+sudo vim /etc/hosts
+    # Add clin2 and clin2.clan to 127.0.0.1
 ```
