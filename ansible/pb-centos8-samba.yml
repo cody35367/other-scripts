@@ -13,7 +13,7 @@
       USER_LIST:
         - cody
         - corinne
-      SHARE_DIRS: /data/test
+      SHARE_DIRS: /data/zpool1/share/
     tasks:
       - name: Instal samba
         dnf:
