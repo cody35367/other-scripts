@@ -13,7 +13,7 @@
       USER_LIST:
         - cody
         - corinne
-      SHARE_DIRS: /data/zpool1/share/
+      SHARE_DIRS: /data/zpool1/share
     tasks:
       - name: Instal samba
         dnf:
@@ -50,15 +50,6 @@
           owner: root
           group: smb-general
           mode: "2770"
-        become: yes
-      - name: Allow samba to modify files (SELinux)
-        sefcontext:
-          target: "{{ SHARE_DIRS }}(/.*)?"
-          setype: samba_share_t
-          state: present
-        become: yes
-      - name: Apply new SELinux file context to filesystem
-        command: "restorecon -irv {{ SHARE_DIRS }}"
         become: yes
       - name: Set SELinux samba_export_all_ro flag on and keep it persistent across reboots
         seboolean:
