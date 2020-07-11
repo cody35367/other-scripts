@@ -14,7 +14,8 @@ function usage(){
     --nvidia            Install the nvidia driver.
     --ssh-keygen        Generate SSH keys
     --gaming            Install gaming stuff like steam and Minecraft. Will also enable gnome setup (--gnome).
-    -a|--all            Install all the above.
+    --alien             Run specifics for Alienware Laptops 
+    -a|--all            Install all the above. Does not include Alienware laptop stuff, need to add that option if needed.s
     -h|--help           Display this menu.
                         
     Example:
@@ -26,6 +27,7 @@ GNOME_SETUP=0
 INSTALL_NVIDIA=0
 DO_SSH_KEYGEN=0
 INSTALL_GAMING=0
+ALIENWARE_LAPTOP=0
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -44,6 +46,10 @@ while [[ $# -gt 0 ]]; do
         --gaming)
             INSTALL_GAMING=1
             GNOME_SETUP=1
+            shift
+        ;;
+        --alien)
+            ALIENWARE_LAPTOP=1
             shift
         ;;
         -a|--all)
@@ -105,6 +111,7 @@ sudo dnf install -y \
 sudo dnf install -y https://nmap.org/dist/zenmap-7.80-1.noarch.rpm
 
 sudo systemctl enable libvirtd --now
+sudo usermod -a -G libvirt ${USER}
 git config --global user.email "cody35367@gmail.com"
 git config --global user.name "Cody Hodges"
 sudo chsh -s /usr/bin/fish ${USER}
@@ -126,9 +133,12 @@ if [[ ${GNOME_SETUP} == 1 ]]; then
         gnome-shell-extension-no-topleft-hot-corner \
         gnome-shell-extension-appindicator
     ../gnome/set_backgrounds.sh
-    ../gnome/create_startup_desktop_file.py ../gnome/brightness.sh
-    ../gnome/create_startup_desktop_file.py ../gnome/custom_suspend.py
+    if [[ ALIENWARE_LAPTOP -eq 1 ]]; then
+        ../gnome/create_startup_desktop_file.py ../gnome/brightness.sh
+        ../gnome/create_startup_desktop_file.py ../gnome/custom_suspend.py
+    fi
     xdotool key "Alt+F2+r" && sleep 0.5 && xdotool key "Return" && sleep 10
+    echo "Note on wayland, the restart of gnome does not work. If on wayland, you must log out and back in (not checked)."
     #firefox https://extensions.gnome.org/extension/118/no-topleft-hot-corner/ &
     gnome-extensions enable nohotcorner@azuri.free.fr
     #firefox https://extensions.gnome.org/extension/615/appindicator-support/ &
