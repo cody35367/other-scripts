@@ -1,0 +1,24 @@
+---
+- hosts: clin2
+  become_method: sudo
+  vars:
+    LIBVIRT_USERS:
+      - chodges
+  tasks:
+    - name: Upgrade all packages
+      dnf:
+        name: "*"
+        state: latest
+      become: yes
+    - name: Install libvirt
+      dnf:
+        name: libvirt
+        state: latest
+      become: yes
+    - name: Add users to libvirt group
+      user:
+        name: "{{ item }}"
+        append: yes
+        groups: libvirt
+      become: yes
+      with_items: "{{ LIBVIRT_USERS }}"
