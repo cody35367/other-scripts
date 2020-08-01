@@ -12,7 +12,9 @@
       become: yes
     - name: Install libvirt
       dnf:
-        name: libvirt
+        name: 
+          - libvirt
+          - libvirt-daemon-kvm
         state: latest
       become: yes
     - name: Add users to libvirt group
