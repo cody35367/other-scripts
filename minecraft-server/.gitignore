@@ -1,0 +1,3 @@
+BuildTools/
+craftbukkit/*
+!craftbukkit/craftbukkit.sh
