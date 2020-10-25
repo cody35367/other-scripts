@@ -2,6 +2,8 @@
 
 # Ref: https://www.spigotmc.org/wiki/buildtools/
 
+set -e
+
 sudo dnf install git java-1.8.0-openjdk-devel
 
 mkdir -p ./BuildTools

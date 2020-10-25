@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 S_JAR="../BuildTools/craftbukkit-*.jar"
 D_JAR="craftbukkit.jar"
 
