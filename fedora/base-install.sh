@@ -131,7 +131,8 @@ if [[ ${GNOME_SETUP} == 1 ]]; then
         deja-dup \
         xdotool \
         gnome-shell-extension-no-topleft-hot-corner \
-        gnome-shell-extension-appindicator
+        gnome-shell-extension-appindicator \
+        gnome-shell-extension-pop-shell
     ../gnome/set_backgrounds.sh
     if [[ ALIENWARE_LAPTOP -eq 1 ]]; then
         ../gnome/create_startup_desktop_file.py ../gnome/brightness.sh
