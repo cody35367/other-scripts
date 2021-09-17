@@ -94,7 +94,6 @@ sudo dnf install -y \
     nmap \
     whois \
     wireshark \
-    fish \
     tilix \
     flameshot \
     curl \
@@ -114,8 +113,6 @@ sudo systemctl enable libvirtd --now
 sudo usermod -a -G libvirt ${USER}
 git config --global user.email "cody35367@gmail.com"
 git config --global user.name "Cody Hodges"
-sudo chsh -s /usr/bin/fish ${USER}
-fish -c 'set -U fish_greeting'
 
 if [[ ${INSTALL_NVIDIA} == 1 ]]; then
     sudo dnf install -y akmod-nvidia
@@ -170,7 +167,3 @@ if [[ ${GNOME_SETUP} == 1 ]]; then
 fi
 
 mkdir -pv ~/.local/bin
-if ! fish -c 'echo $fish_user_paths' | grep -q ${HOME}/.local/bin; then
-    fish -c 'set -Up fish_user_paths ~/.local/bin'
-fi
-fish -c 'fish_update_completions'
