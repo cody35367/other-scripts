@@ -1,0 +1,8 @@
+[Unit]
+Description=Runs /usr/local/bin/startup-scripts.sh
+
+[Service]
+ExecStart=/usr/local/bin/startup-scripts.sh
+
+[Install]
+WantedBy=multi-user.target
