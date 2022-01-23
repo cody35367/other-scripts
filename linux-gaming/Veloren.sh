@@ -1,3 +1,2 @@
 #!/bin/bash
-cd ~/Games/veloren
-./veloren-voxygen
+flatpak run net.veloren.airshipper run

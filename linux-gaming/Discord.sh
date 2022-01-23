@@ -1,3 +1,3 @@
 #!/bin/bash
 cd ~/Applications/Discord
-./Discord
+./Discord --disable-gpu-sandbox
