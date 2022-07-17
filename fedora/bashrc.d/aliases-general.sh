@@ -1,2 +1,2 @@
 #!/bin/bash
-alias update="${HOME}/work/repos/other-scripts/fedora/full-upgrade.sh"
+alias update="${HOME}/repos/other-scripts/fedora/full-upgrade.sh"
