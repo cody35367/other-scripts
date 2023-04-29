@@ -2,7 +2,7 @@
 
 set -e
 
-SERVER_NAME="10.10.250.2"
+SERVER_NAME="cnas1"
 NAS_URL_PRE="smb://${SERVER_NAME}"
 SHARE_NAME="home"
 VOLUME_MOUNT="/run/user/$(id -u)/gvfs/smb-share:server=${SERVER_NAME},share=${SHARE_NAME}"
