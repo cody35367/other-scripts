@@ -1,0 +1,6 @@
+[Unit]
+Description=Run linux-home-backup
+
+[Service]
+Type=oneshot
+ExecStart=%h/repos/other-scripts/linux-backup/linux-home-backup.sh
