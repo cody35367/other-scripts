@@ -103,7 +103,6 @@ sudo dnf install -y \
     buildah \
     toolbox \
     htop
-sudo dnf install -y https://nmap.org/dist/zenmap-7.80-1.noarch.rpm
 
 sudo systemctl enable libvirtd --now
 sudo usermod -a -G libvirt ${USER}
@@ -124,13 +123,7 @@ fi
 if [[ ${GNOME_SETUP} == 1 ]]; then
     sudo dnf install -y \
         gnome-tweaks \
-        deja-dup \
-        xdotool \
-        gnome-shell-extension-appindicator \
-    ../gnome/set_backgrounds.sh
-    xdotool key "Alt+F2+r" && sleep 0.5 && xdotool key "Return" && sleep 10
-    echo "Note on wayland, the restart of gnome does not work. If on wayland, you must log out and back in (not checked)."
-    gnome-extensions enable appindicatorsupport@rgcjonas.gmail.com
+        gnome-shell-extension-appindicator
     if [[ ${INSTALL_GAMING} == 1 ]]; then
         if [[ ${SKIP_PROMPT} == 0 ]]; then
             read -p "Please enable rpmfusion-nonfree-steam in the gnome store and then press any key to continue..."
@@ -138,8 +131,7 @@ if [[ ${GNOME_SETUP} == 1 ]]; then
         sudo dnf install -y \
             java-11-openjdk \
             steam \
-            gamemode \
-            gnome-shell-extension-gamemode
+            gamemode
         mkdir -vp ~/Games ~/Downloads/installed ~/Applications
         # Minecraft
         if [[ ! -d ~/Games/minecraft-launcher/ ]]; then
@@ -153,10 +145,8 @@ if [[ ${GNOME_SETUP} == 1 ]]; then
             tar -xzf ~/Downloads/installed/Discord.tar.gz -C ~/Applications
         fi
         ../gnome/gen_desktop_file.py ../linux-gaming/Discord.sh ~/.local/share/applications/Discord.desktop
-        # Gamemode extension
-        gnome-extensions enable gamemode@christian.kellner.me
     fi
-    echo "If extensions are not working, open gnome-tweaks and enabled Extensions (topbar)."
+    echo "If extensions are not working, open Extensions flatpak downloaded from store."
 fi
 
 mkdir -pv ~/.local/bin
