@@ -10,6 +10,7 @@ REMOTE_VM_DIR="${VOLUME_MOUNT}/linux-home-backup"
 BACKUP_LOG="${VOLUME_MOUNT}/linux-home-backup.log"
 DIRS_TO_BACKUP=(
     ".thunderbird"
+    ".minecraft"
 )
 
 if [[ $(id -u) == 0 ]]; then
