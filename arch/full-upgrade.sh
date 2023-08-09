@@ -10,4 +10,9 @@ if [[ -x "$(command -v yay)" ]]; then
 fi
 echo
 echo "Installed foreign packages:"
-pacman -Qqm
+pacman -Qqm | true
+echo
+echo
+"$(dirname "$0")/../linux-general/update-vscode.sh"
+"$(dirname "$0")/../linux-gaming/update-discord.sh"
+"$(dirname "$0")/../linux-gaming/update-minecraft-launcher.sh"
