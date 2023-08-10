@@ -1,9 +1,18 @@
 [Desktop Entry]
 Name=Visual Studio Code
 Comment=Programming Text Editor
-Exec=/home/chodges/Applications/VSCode-linux-x64/bin/code --disable-gpu
+GenericName=Text Editor
+Exec=/home/chodges/Applications/VSCode-linux-x64/bin/code --disable-gpu --unity-launch %F
 Icon=/home/chodges/Applications/VSCode-linux-x64/resources/app/resources/linux/code.png
-Terminal=false
 Type=Application
-Categories=Programming;
+StartupNotify=false
 StartupWMClass=Code
+Categories=TextEditor;Development;IDE;
+MimeType=text/plain;inode/directory;application/x-code-workspace;
+Actions=new-empty-window;
+Keywords=vscode;
+
+[Desktop Action new-empty-window]
+Name=New Empty Window
+Exec=/usr/share/code/code --disable-gpu --new-window %F
+Icon=/home/chodges/Applications/VSCode-linux-x64/resources/app/resources/linux/code.png
