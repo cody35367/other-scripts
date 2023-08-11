@@ -14,5 +14,5 @@ Keywords=vscode;
 
 [Desktop Action new-empty-window]
 Name=New Empty Window
-Exec=/usr/share/code/code --disable-gpu --new-window %F
+Exec=/home/chodges/Applications/VSCode-linux-x64/bin/code --disable-gpu --new-window %F
 Icon=/home/chodges/Applications/VSCode-linux-x64/resources/app/resources/linux/code.png
