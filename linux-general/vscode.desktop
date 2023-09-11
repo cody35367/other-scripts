@@ -2,7 +2,7 @@
 Name=Visual Studio Code
 Comment=Programming Text Editor
 GenericName=Text Editor
-Exec=/home/chodges/Applications/VSCode-linux-x64/bin/code --disable-gpu --unity-launch %F
+Exec=/home/chodges/Applications/VSCode-linux-x64/bin/code --enable-features=UseOzonePlatform --ozone-platform=wayland --unity-launch %F
 Icon=/home/chodges/Applications/VSCode-linux-x64/resources/app/resources/linux/code.png
 Type=Application
 StartupNotify=false
@@ -14,5 +14,5 @@ Keywords=vscode;
 
 [Desktop Action new-empty-window]
 Name=New Empty Window
-Exec=/home/chodges/Applications/VSCode-linux-x64/bin/code --disable-gpu --new-window %F
+Exec=/home/chodges/Applications/VSCode-linux-x64/bin/code --enable-features=UseOzonePlatform --ozone-platform=wayland --new-window %F
 Icon=/home/chodges/Applications/VSCode-linux-x64/resources/app/resources/linux/code.png
