@@ -8,9 +8,8 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-#define SHMPATH "/cody.test"
-#define errExit(msg)    do { perror(msg); exit(EXIT_FAILURE); \
-                        } while (0)
+#define SHMPATH "/dev/shm/cody.test"
+#define errExit(msg)    {perror(msg); exit(EXIT_FAILURE);}
 
 bool terminate = false;
 
@@ -24,14 +23,12 @@ int main(int argc, char *argv[]) {
 
     signal(SIGINT, handle_sigint); 
 
-    /* Create shared memory object and set its size to the size
-        of our structure. */
-    fd = shm_open(SHMPATH, O_RDWR, 0);
+    fd = open(SHMPATH, O_RDONLY, 0);
     if (fd == -1)
-        errExit("shm_open");
+        errExit("open");
 
     /* Map the object into the caller's address space. */
-    cnt = mmap(NULL, sizeof(*cnt), PROT_READ | PROT_WRITE,
+    cnt = mmap(NULL, sizeof(*cnt), PROT_READ,
                 MAP_SHARED, fd, 0);
 
     close(fd);
@@ -42,11 +39,6 @@ int main(int argc, char *argv[]) {
     }
 
     printf("Going to clean up...\n");
-
-    /* Unlink the shared memory object. Even if the peer process
-        is still using the object, this is okay. The object will
-        be removed only after all open references are closed. */
-    shm_unlink(SHMPATH);
 
     exit(EXIT_SUCCESS);
 }
