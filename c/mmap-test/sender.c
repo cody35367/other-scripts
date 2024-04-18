@@ -40,7 +40,9 @@ int main(int argc, char *argv[]) {
     close(fd);
 
     clock_gettime(CLOCK_MONOTONIC_RAW, &end);
-    
+
+    printf("cnt: 0x%016lx %u %u\n", cnt, sizeof(unsigned long int), sizeof(cnt));
+
     printf ("Total time = %.9f seconds\n",
             (end.tv_nsec - begin.tv_nsec) / 1000000000.0 +
             (end.tv_sec  - begin.tv_sec));
