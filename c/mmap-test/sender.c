@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <time.h>
 
 #define SHMPATH "/dev/shm/cody.test"
 #define errExit(msg)    {perror(msg); exit(EXIT_FAILURE);}
@@ -20,9 +21,11 @@ void handle_sigint(int sig) {
 int main(int argc, char *argv[]) {
     int            fd;
     uint32_t       *cnt;
+    struct timespec begin, end;
 
-    signal(SIGINT, handle_sigint); 
+    signal(SIGINT, handle_sigint);
 
+    clock_gettime(CLOCK_MONOTONIC_RAW, &begin);
     fd = open(SHMPATH, O_CREAT | O_RDWR, 0600);
     if (fd == -1)
         errExit("open");
@@ -35,6 +38,12 @@ int main(int argc, char *argv[]) {
                 MAP_SHARED, fd, 0);
 
     close(fd);
+
+    clock_gettime(CLOCK_MONOTONIC_RAW, &end);
+    
+    printf ("Total time = %.9f seconds\n",
+            (end.tv_nsec - begin.tv_nsec) / 1000000000.0 +
+            (end.tv_sec  - begin.tv_sec));
 
     *cnt = 0;
 
