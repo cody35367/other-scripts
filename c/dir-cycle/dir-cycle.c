@@ -19,7 +19,8 @@ int main(int argc, char *argv[]) {
     DIR *dr;
     FILE *fptr;
     char filename[256] = {0};
-    char strRdBuff[100];
+    char chrRdBuff;
+    size_t bytesRead = 0;
     if (argc == 2) {
         signal(SIGINT, handle_sigint);
         dr = opendir(argv[1]);
@@ -37,8 +38,11 @@ int main(int argc, char *argv[]) {
                 snprintf(filename, sizeof(filename), "%s/%s", argv[1], de->d_name);
                 fptr = fopen(filename, "r");
                 if(fptr != NULL) {
-                    while(fgets(strRdBuff, sizeof(strRdBuff), fptr)) {
-                        printf("%s: %s", filename, strRdBuff);
+                    bytesRead = fread(&chrRdBuff, 1, sizeof(chrRdBuff), fptr);
+                    if (bytesRead == sizeof(chrRdBuff)) {
+                        printf("%s: %c\n", filename, chrRdBuff);
+                    } else {
+                        printf("%d bytes in %s, ignoring\n", bytesRead, filename);
                     }
                     fclose(fptr);
                 } else {
