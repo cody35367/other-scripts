@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <inttypes.h>
+#include <stdlib.h>
 
 static uint8_t terminated = 0;
 
@@ -14,66 +15,62 @@ void handle_sigint(int sig) {
     }
 }
 
-uint8_t scroll_for_good_file(DIR *dr, char *dirname) {
-    struct dirent *de;
+uint8_t scroll_for_good_file(struct dirent **deList, int itemsInDir, char *dirname) {
     FILE *fptr;
     char filename[256] = {0};
     char chrRdBuff;
     size_t bytesRead = 0;
     uint8_t foundGoodFile = 0;
-    uint8_t foundRegFile = 0;
     uint32_t badCount = 0;
-    while((!foundGoodFile) && badCount < 2) {
-        de = readdir(dr);
-        if (de == NULL) {
-            if (!foundRegFile) {
-                printf("Directory is empty\n");
-                break;
-            }
-            rewinddir(dr);
-            de = readdir(dr);
-        }
-        if (de->d_type == DT_REG) {
-            foundRegFile = 1;
-            snprintf(filename, sizeof(filename), "%s/%s", dirname, de->d_name);
-            fptr = fopen(filename, "r");
-            if(fptr != NULL) {
-                bytesRead = fread(&chrRdBuff, 1, sizeof(chrRdBuff), fptr);
-                if (bytesRead == sizeof(chrRdBuff)) {
-                    printf("%s: %c\n", filename, chrRdBuff);
-                    foundGoodFile = 1;
-                } else {
-                    printf("%d bytes in %s, ignoring\n", bytesRead, filename);
-                    badCount++;
-                }
-                fclose(fptr);
+    static uint32_t curIdx = 0;
+    while((!foundGoodFile) && badCount < 2 && itemsInDir > 0) {
+        snprintf(filename, sizeof(filename), "%s/%s", dirname, deList[curIdx]->d_name);
+        fptr = fopen(filename, "r");
+        if(fptr != NULL) {
+            bytesRead = fread(&chrRdBuff, 1, sizeof(chrRdBuff), fptr);
+            if (bytesRead == sizeof(chrRdBuff)) {
+                printf("%s: %c\n", filename, chrRdBuff);
+                foundGoodFile = 1;
             } else {
-                printf("[%d]: %s \"%s\", skipping...\n", errno, strerror(errno), filename);
+                printf("%d bytes in %s, ignoring\n", bytesRead, filename);
                 badCount++;
             }
+            fclose(fptr);
+        } else {
+            printf("[%d]: %s \"%s\", skipping...\n", errno, strerror(errno), filename);
+            badCount++;
         }
+        curIdx = (curIdx + 1) % itemsInDir;
     }
     return foundGoodFile;
 }
 
+int filterRegFiles(const struct dirent *de) {
+    if (de->d_type == DT_REG) {
+        return 1;
+    }
+    return 0;
+}
+
 int main(int argc, char *argv[]) {
-    DIR *dr;
+    struct dirent **deList;
+    int itemsInDir = 0;
     if (argc == 2) {
         signal(SIGINT, handle_sigint);
-        dr = opendir(argv[1]);
-        if (dr == NULL) {
+        itemsInDir = scandir(argv[1], &deList, filterRegFiles, alphasort);
+        if (itemsInDir == -1) {
             printf("[%d]: %s \"%s\"\n", errno, strerror(errno), argv[1]);
             return 2; 
         }
         while (!terminated) {
-            if (scroll_for_good_file(dr, argv[1])) {
+            if (scroll_for_good_file(deList, itemsInDir, argv[1])) {
                 usleep(1000000);
             } else {
                 printf("Too many bads\n");
                 break;
             }
         }
-        closedir(dr);
+        free(deList);
         printf("\n");
     } else {
         printf("Only one argument (directory) expected\n");
