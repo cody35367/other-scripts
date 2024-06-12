@@ -21,14 +21,20 @@ uint8_t scroll_for_good_file(DIR *dr, char *dirname) {
     char chrRdBuff;
     size_t bytesRead = 0;
     uint8_t foundGoodFile = 0;
+    uint8_t foundRegFile = 0;
     uint32_t badCount = 0;
     while((!foundGoodFile) && badCount < 2) {
         de = readdir(dr);
         if (de == NULL) {
+            if (!foundRegFile) {
+                printf("Directory is empty\n");
+                break;
+            }
             rewinddir(dr);
             de = readdir(dr);
         }
         if (de->d_type == DT_REG) {
+            foundRegFile = 1;
             snprintf(filename, sizeof(filename), "%s/%s", dirname, de->d_name);
             fptr = fopen(filename, "r");
             if(fptr != NULL) {
