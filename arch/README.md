@@ -40,6 +40,7 @@ vim /etc/sudoers
 # Now you su to chodges user
 sudo systemctl enable gdm
 sudo systemctl enable NetworkManager
+sudo systemctl enable bluetooth
 # Create a distrobox and then install vscode and do this in the container
 distrobox-export --app code
 distrobox-export --bin /usr/bin/code
