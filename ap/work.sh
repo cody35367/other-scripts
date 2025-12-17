@@ -1,0 +1,72 @@
+#!/bin/bash
+
+AP_INTERFACE=wlp0s20f3
+INTERNET_INTERFACE=enx00e04c613e75
+WI_INDEX="2"
+STEAL_FROM_NM=1
+IP_24_PREFIX=10.12.230
+AP_IP=${IP_24_PREFIX}.1
+
+cd "$(dirname "$0")"
+
+if [ ${STEAL_FROM_NM} -eq 1 ]; then
+    echo "Taking ${AP_INTERFACE} from NetworkManger..."
+    sudo nmcli dev set ${AP_INTERFACE} managed no
+fi
+
+echo "Clean up ${AP_INTERFACE} before using it..."
+sudo ip link set ${AP_INTERFACE} down
+sudo ip addr flush dev ${AP_INTERFACE}
+echo "Disabling soft rfkill on ${WI_INDEX}..."
+rfkill unblock ${WI_INDEX}
+echo "Setting ${AP_IP}/24 on ${AP_INTERFACE}..."
+sudo ip addr add ${AP_IP}/24 dev ${AP_INTERFACE}
+sudo ip link set ${AP_INTERFACE} up
+
+echo "Enable routing..."
+sudo sysctl -w net.ipv4.ip_forward=1
+sudo iptables -t nat -A POSTROUTING -s ${IP_24_PREFIX}.0/24 -o ${INTERNET_INTERFACE} -j MASQUERADE
+sudo iptables -A FORWARD -s ${IP_24_PREFIX}.0/24 -o ${INTERNET_INTERFACE} -j ACCEPT
+sudo iptables -A FORWARD -d ${IP_24_PREFIX}.0/24 -m state --state ESTABLISHED,RELATED -i ${INTERNET_INTERFACE} -j ACCEPT
+
+dnsmasq_args=(
+    # No config file all will be configured with below options
+    --conf-file=/dev/null
+    # Disable DNS
+    --port=0
+    # Interface to run the DHCP server on
+    --interface=${AP_INTERFACE}
+    # Only listen to the specified interface
+    --bind-interfaces
+    # DHCP range
+    --dhcp-range=${IP_24_PREFIX}.10,${IP_24_PREFIX}.50,12h
+    # Alt DHCP lease file
+    --dhcp-leasefile=/tmp/ap-dhcp-dnsmasq.leases
+    # Alt PID file
+    --pid-file=/tmp/ap-dhcp-dnsmasq.pid
+    # Do not look for local dns
+    --no-resolv
+    # Should be the only DHCP on this subnet
+    --dhcp-authoritative
+    # Provide custom dns
+    --dhcp-option=option:dns-server,208.67.222.123,208.67.220.123
+)
+echo "Starting dnsmasq daemon ..."
+sudo dnsmasq ${dnsmasq_args[@]}
+
+echo "Starting hostapd..."
+sudo hostapd -i ${AP_INTERFACE} ./hostapd.conf
+echo "Hostapd stopped."
+
+echo "Start cleanup..."
+sudo kill -SIGQUIT $(cat /tmp/ap-dhcp-dnsmasq.pid)
+echo "Sent SIGQUIT to $(cat /tmp/ap-dhcp-dnsmasq.pid), waiting for it to close..."
+
+echo "Bringing down ${AP_INTERFACE} and removing IPs..."
+sudo ip link set ${AP_INTERFACE} down
+sudo ip addr flush dev ${AP_INTERFACE}
+
+if [ ${STEAL_FROM_NM} -eq 1 ]; then
+    echo "Giving ${AP_INTERFACE} back to NetworkManger..."
+    sudo nmcli dev set ${AP_INTERFACE} managed yes
+fi
