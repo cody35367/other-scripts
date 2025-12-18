@@ -1,13 +1,24 @@
 #!/bin/bash
 
 AP_INTERFACE=wlp0s20f3
-INTERNET_INTERFACE=enx00e04c613e75
+INTERNET_INTERFACE=eno1
 WI_INDEX="2"
 STEAL_FROM_NM=1
 IP_24_PREFIX=10.12.230
 AP_IP=${IP_24_PREFIX}.1
+INVALID_PASS_CHARS="#/"
 
 cd "$(dirname "$0")"
+
+if [ ! -f sae_pass ]; then
+    echo "Missing password file for WPA3 password, cannot continue"
+    exit 1
+fi
+if grep -qP '['${INVALID_PASS_CHARS}']' sae_pass; then
+    echo "Password cannot contain '${INVALID_PASS_CHARS}'"
+    exit 2
+fi
+sed -Ei "s/#(sae_password=)secret/\1$(cat sae_pass)/1" hostapd.conf
 
 if [ ${STEAL_FROM_NM} -eq 1 ]; then
     echo "Taking ${AP_INTERFACE} from NetworkManger..."
@@ -70,3 +81,5 @@ if [ ${STEAL_FROM_NM} -eq 1 ]; then
     echo "Giving ${AP_INTERFACE} back to NetworkManger..."
     sudo nmcli dev set ${AP_INTERFACE} managed yes
 fi
+
+sed -Ei "s/^(sae_password=).+/#\1secret/1" hostapd.conf
