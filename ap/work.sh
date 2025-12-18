@@ -4,11 +4,15 @@ AP_INTERFACE=wlp0s20f3
 INTERNET_INTERFACE=eno1
 WI_INDEX="2"
 STEAL_FROM_NM=1
+LAUNCH_UXPLAY=1
+UXPLAY_BUILD_DIR=${HOME}/repos/UxPlay/build
+UXPLAY_PID=""
 IP_24_PREFIX=10.12.230
 AP_IP=${IP_24_PREFIX}.1
 INVALID_PASS_CHARS="#/"
 
 cd "$(dirname "$0")"
+ORIGINAL_PWD=$(pwd)
 
 if [ ! -f sae_pass ]; then
     echo "Missing password file for WPA3 password, cannot continue"
@@ -65,9 +69,23 @@ dnsmasq_args=(
 echo "Starting dnsmasq daemon ..."
 sudo dnsmasq ${dnsmasq_args[@]}
 
+if [ ${LAUNCH_UXPLAY} -eq 1 ]; then
+    echo "Launching uxplay for screen mirror..."
+    cd ${UXPLAY_BUILD_DIR}
+    stdbuf -oL -eL ./uxplay &> ${ORIGINAL_PWD}/uxplay.log < /dev/null &
+    UXPLAY_PID=$!
+fi
+cd ${ORIGINAL_PWD}
+
 echo "Starting hostapd..."
 sudo hostapd -i ${AP_INTERFACE} ./hostapd.conf
 echo "Hostapd stopped."
+
+if [ ${LAUNCH_UXPLAY} -eq 1 ]; then
+    echo "Killing uxplay for screen mirror..."
+    kill -SIGINT ${UXPLAY_PID}
+    wait ${UXPLAY_PID}
+fi
 
 echo "Start cleanup..."
 sudo kill -SIGQUIT $(cat /tmp/ap-dhcp-dnsmasq.pid)
