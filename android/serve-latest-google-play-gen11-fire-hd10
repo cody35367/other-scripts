@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+
+DEFAULT_DOWNLOAD_DIR=latest-google-play-gen11-fire-hd10
+cd ${DEFAULT_DOWNLOAD_DIR}
+echo "Connect to http://$(ip -4 route show default | awk '{print $9}' | xargs):8000 to pull down APKs"
+python3 -m http.server 
