@@ -1,0 +1,83 @@
+#!/bin/bash
+
+set -e
+
+APKMD_BIN=./apkmd
+APKMD_LOG=./apkmd.log
+DEFAULT_DOWNLOAD_DIR=latest-google-play-gen11-fire-hd10
+COMMON_ORG=google-inc
+MAX_RETRIES=3
+SLEEP_SEC=30
+
+if [ ! -x ${APKMD_BIN} ]; then
+    APKMD_CLI_DOWNLOAD_URL=$(curl -s "https://api.github.com/repos/tanishqmanuja/apkmirror-downloader/releases/latest" | grep "browser_download_url" | grep 'apkmd"' | cut -d '"' -f 4)
+    echo "Downloading ${APKMD_BIN} from ${APKMD_CLI_DOWNLOAD_URL}"
+    curl -L ${APKMD_CLI_DOWNLOAD_URL} -o ${APKMD_BIN}
+    chmod +x ${APKMD_BIN}
+fi
+
+mkdir -p ${DEFAULT_DOWNLOAD_DIR}
+> ${APKMD_LOG}
+
+function get_apk() {
+    local app_name=$1
+    local output_file=($2)
+    local attempt=0
+    shift 2
+
+    output_file="${output_file[0]}"
+
+    while [[ ! -f ${output_file} && $attempt -lt $MAX_RETRIES ]]; do
+        set -x
+        ${APKMD_BIN} download --outdir ${DEFAULT_DOWNLOAD_DIR} "$@" ${COMMON_ORG} ${app_name} &>> ${APKMD_LOG}
+        set +x
+        output_file=(${output_file})
+        output_file="${output_file[0]}"
+        if [[ -f ${output_file} ]]; then
+            echo "Downloaded ${app_name} successfully as ${output_file}"
+            break
+        fi
+        ((attempt++)) || true
+        if (( attempt < MAX_RETRIES )); then
+            echo "Failed to get ${app_name}, check ${APKMD_LOG} for detail. Will try again in ${SLEEP_SEC} seconds."
+            sleep ${SLEEP_SEC}
+        else
+            echo "Could not download ${app_name} after ${MAX_RETRIES}, skipping"
+        fi
+    done
+}
+
+function get_apk_firefox() {
+    local app_name=$1
+    local output_file=($2)
+    local url=$3
+    local do_download=0
+    shift 3
+
+    output_file="${output_file[0]}"
+    if [[ ! -f ${output_file} ]]; then
+        firefox ${url}
+        do_download=1
+    fi
+    while [[ ! -f ${output_file} ]]; do
+        sleep 1
+        output_file=(${output_file})
+        output_file="${output_file[0]}"
+    done
+    if [[ $do_download -eq 1 ]]; then
+        echo "Found ${app_name} at ${output_file}"
+    fi
+}
+
+# Update version from latest here: https://www.apkmirror.com/apk/google-inc/google-services-framework/variant-%7B%22arches_slug%22%3A%5B%5D%2C%22minapi_slug%22%3A%22minapi-28%22%7D/
+get_apk google-services-framework "${DEFAULT_DOWNLOAD_DIR}/com.google.android.gsf_*" --version "9-6957767"
+
+get_apk google-account-manager "${DEFAULT_DOWNLOAD_DIR}/com.google.android.gsf.login_*"
+
+# Find the newest non-beta version here: https://www.apkmirror.com/uploads/?appcategory=google-play-services
+# get_apk does not work for this because the minandroidversion is not implemented correctly in the tool
+#get_apk google-play-services "${DEFAULT_DOWNLOAD_DIR}/com.google.android.gms_*" --version "25.49.32" --arch "arm64-v8a + armeabi-v7a" --minandroidversion "9.0"
+get_apk_firefox google-play-services "${DEFAULT_DOWNLOAD_DIR}/com.google.android.gms_*" https://www.apkmirror.com/apk/google-inc/google-play-services/google-play-services-25-49-32-release/google-play-services-25-49-32-100400-843446962-android-apk-download/
+
+get_apk google-play-store "${DEFAULT_DOWNLOAD_DIR}/com.android.vending_*"
+
