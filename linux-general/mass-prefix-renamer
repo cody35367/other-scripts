@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ "$#" -ne 2 ]; then
+  echo "Usage: $0 <old_prefix> <new_prefix>"
+  exit 1
+fi
+
+find . -type f -name $1'*' | while read -r file; do
+  dir=$(dirname "$file")
+  base=$(basename "$file")
+  mv -v "$file" "$dir/$2${base#$1}"
+done
