@@ -7,7 +7,7 @@
 ./run-dhcp-server.sh enx00e04c681bf1 enx00e04c613e75
 ```
 
-# Setup to pull local images
+# Setup to pull local images (use with local-vars.ipxe)
 - Go to http://localhost:3000/
 - Select "Local Assets"
 - Download all desired images

@@ -48,7 +48,9 @@ args=(
     --dhcp-boot=tag:efi64,netboot.xyz.efi,,192.168.213.1
 )
 
-echo -e '#!ipxe\nset live_endpoint http://192.168.213.1:8080' > config/menus/local-vars.ipxe
+# Uncomment if you need to only pull images locally, otherwise we can just pull it from the project's github
+#echo -e '#!ipxe\nset live_endpoint http://192.168.213.1:8080' > config/menus/local-vars.ipxe
+
 sudo dnsmasq ${args[@]}
 
 if command -v firewall-cmd; then
