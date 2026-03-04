@@ -25,8 +25,8 @@ class Handler(BaseHTTPRequestHandler):
             data = json.loads(body)
             hostname = data["hostname"]
             local_ip = data["local_ip"]
-            clients[local_ip] = {
-                "hostname": hostname,
+            clients[hostname] = {
+                "local_ip": local_ip,
                 "last_seen": now
             }
             self.send_response(200)
@@ -47,9 +47,9 @@ class Handler(BaseHTTPRequestHandler):
         now = time.time()
         result = {}
 
-        for local_ip, info in clients.items():
-            result[local_ip] = {
-                "hostname": info["hostname"],
+        for hostname, info in clients.items():
+            result[hostname] = {
+                "local_ip": info["local_ip"],
                 "seconds_since_checkin": int(now - info["last_seen"])
             }
 

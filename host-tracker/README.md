@@ -3,6 +3,7 @@
 - On central server with know IP: `./host-tracker`
 - On Linux client: `/path/to/host-tracker-client localhost 9537`
 - On Windows client: `C:\path\to\python.exe C:\path\to\host-tracker-client localhost 9537`
+- All this assume hostnames are unique.
 
 # Schedule
 
