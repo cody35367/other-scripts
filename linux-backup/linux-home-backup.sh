@@ -10,6 +10,7 @@ REMOTE_VM_DIR="${VOLUME_MOUNT}/linux-home-backup"
 BACKUP_LOG="${VOLUME_MOUNT}/linux-home-backup.log"
 DIRS_TO_BACKUP=(
     ".minecraft"
+    "Games/Emulation"
 )
 
 if [[ $(id -u) == 0 ]]; then
